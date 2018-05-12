@@ -55,7 +55,6 @@ public class FXMLController implements Initializable {
 
         app_stage.setScene(home_page_scene);
         app_stage.show();
-//        graph.display();
     }
 
     @FXML
@@ -96,7 +95,6 @@ public class FXMLController implements Initializable {
             viewer.enableAutoLayout();
             FxViewPanel v = (FxViewPanel)viewer.addDefaultView(false);
             pane.getChildren().add(v);
-            pane.getChildren().get(0).resize(200, 200);
         }
     }
 
