@@ -24,7 +24,7 @@ public class FXMLController implements Initializable {
 
     private static String numberOfNodes;
 
-    private static final Graph graph = new SingleGraph("Tutorial 1");
+    private static final Graph graph = new SingleGraph("Edge-magic-total-labeling");
 
     @FXML
     private TextField number;
