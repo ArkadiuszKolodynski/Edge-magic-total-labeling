@@ -33,6 +33,7 @@
     </organization>
 
     <build>
+        <finalName>Edge-magic-total-labeling</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,9 +55,12 @@
                 </executions>
             </plugin>
             <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.2</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <mainClass>pl.si.put.poznan.edge.magic.total.labeling.MainApp</mainClass>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -80,6 +84,30 @@
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>pl.si.put.poznan.edge.magic.total.labeling.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                    <finalName>Edge-magic-total-labeling-full</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin> 
         </plugins>
     </build>
 

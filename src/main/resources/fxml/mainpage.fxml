@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.embed.swing.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.web.*?>
@@ -19,15 +20,39 @@
         <Font size="15.0" fx:id="x1" />
       </font>
     </Label>
-    <TextField fx:id="number" layoutX="14.0" layoutY="54.0" prefWidth="181.0" />
-    <Button contentDisplay="BOTTOM" layoutX="14.0" layoutY="85.0" mnemonicParsing="false" onAction="#handleButtonConfirm" prefWidth="181.0" text="Zatwierdź" />
-    <Button layoutX="14.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleButtonClear" prefWidth="97.0" text="Wyczyść" />
-    <Label font="$x1" layoutX="14.0" layoutY="117.0" prefWidth="83.0" text="w1" />
-    <Label font="$x1" layoutX="142.0" layoutY="117.0" prefHeight="21.0" prefWidth="53.0" text="w2" />
-    <ComboBox fx:id="w1Combo" layoutX="14.0" layoutY="138.0" />
-    <ComboBox fx:id="w2Combo" layoutX="142.0" layoutY="138.0" />
-    <Button layoutX="14.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleButtonEdge" prefWidth="181.0" text="Dodaj krawędź" />
-    <Button font="$x1" layoutX="14.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleButtonSolve" prefHeight="61.0" prefWidth="181.0" text="Rozwiąż" />
+    <TextField fx:id="number" layoutX="14.0" layoutY="54.0" prefWidth="181.0" promptText="Podaj liczbę całkowitą" />
+    <Button contentDisplay="BOTTOM" layoutX="14.0" layoutY="90.0" mnemonicParsing="false" onAction="#handleButtonConfirm" prefWidth="181.0" text="Zatwierdź">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+    </Button>
+    <Button layoutX="14.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleButtonClear" prefWidth="97.0" text="Wyczyść">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+    </Button>
+    <Label font="$x1" layoutX="14.0" layoutY="122.0" prefWidth="83.0" text="w1" />
+    <Label font="$x1" layoutX="132.0" layoutY="122.0" prefHeight="21.0" prefWidth="53.0" text="w2" />
+    <ComboBox fx:id="w1Combo" layoutX="14.0" layoutY="143.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+    </ComboBox>
+    <ComboBox fx:id="w2Combo" layoutX="132.0" layoutY="143.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+    </ComboBox>
+    <Button layoutX="14.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleButtonEdge" prefWidth="181.0" text="Dodaj krawędź">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+    </Button>
+    <Button font="$x1" layoutX="14.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleButtonSolve" prefHeight="61.0" prefWidth="181.0" text="Rozwiąż">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+    </Button>
     <Pane fx:id="pane" layoutX="209.0" layoutY="14.0" prefHeight="400.0" prefWidth="400.0" />
   </children>
 </AnchorPane>

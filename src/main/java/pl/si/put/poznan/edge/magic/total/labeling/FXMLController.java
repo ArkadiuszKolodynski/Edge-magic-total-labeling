@@ -12,9 +12,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
@@ -41,20 +43,25 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleButtonConfirm(ActionEvent event) throws IOException {
         numberOfNodes = number.getText();
-
         graph.clear();
 
-        for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
-            String j = Integer.toString(i);
-            graph.addNode(j).setAttribute("ui.label", j);
+        try {
+            for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
+                String j = Integer.toString(i);
+                graph.addNode(j).setAttribute("ui.label", j);
+            }
+
+            graph.setAttribute("ui.stylesheet", styleSheet);
+
+            Parent home_page_parent = FXMLLoader.load(getClass().getResource("/fxml/mainpage.fxml"));
+            Scene home_page_scene = new Scene(home_page_parent);
+            Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            app_stage.setScene(home_page_scene);
+            app_stage.show();
+        } catch (IOException | NumberFormatException | IdAlreadyInUseException e) {
+            number.setStyle("-fx-border-color: red");
         }
-
-        Parent home_page_parent = FXMLLoader.load(getClass().getResource("/fxml/mainpage.fxml"));
-        Scene home_page_scene = new Scene(home_page_parent);
-        Stage app_stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        app_stage.setScene(home_page_scene);
-        app_stage.show();
     }
 
     @FXML
@@ -89,13 +96,18 @@ public class FXMLController implements Initializable {
                 w2Combo.getItems().add(j);
             }
         }
-        
+
         if (pane != null) {
             Viewer viewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
             viewer.enableAutoLayout();
-            FxViewPanel v = (FxViewPanel)viewer.addDefaultView(false);
+            FxViewPanel v = (FxViewPanel) viewer.addDefaultView(false);
             pane.getChildren().add(v);
         }
     }
+
+    protected static String styleSheet
+            = "node {"
+            + "    size: 20px, 20px;"
+            + "}";
 
 }
