@@ -24,6 +24,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -100,8 +101,9 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonClear(ActionEvent event) throws IOException {
-        System.out.println("Czyszczenie...");
-
+        for (Object e : graph.edges().toArray()) {
+            graph.removeEdge((Edge)e);
+        }
     }
 
     @Override
