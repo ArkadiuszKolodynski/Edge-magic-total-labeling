@@ -3,6 +3,7 @@ package pl.si.put.poznan.edge.magic.total.labeling;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -88,31 +89,7 @@ public class FXMLController implements Initializable {
     private void handleButtonSolve(ActionEvent event) throws IOException {
         graph.write("graph.dgs");
 
-        ISolver solver = SolverFactory.newDefault();
-        solver.setTimeout(3600);
-        Reader reader = new DimacsReader(solver);
-        PrintWriter writer = new PrintWriter("dimacs.sol", "UTF-8");
-        try {
-            IProblem problem = reader.parseInstance("dimacs.cnf");
-            if (problem.isSatisfiable()) {
-                writer.println("SAT");
-                for (int e : problem.model()) {
-                    writer.print(e + " ");
-                }
-                writer.print("0");
-                writer.close();
-            } else {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Wystąpił błąd");
-                alert.setHeaderText("Wystąpił błąd");
-                alert.setContentText("Ten problem jest nierozwiązywalny!");
-                alert.showAndWait();
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-        } catch (ContradictionException | ParseFormatException | IOException | TimeoutException e) {
-            System.out.println(e.getMessage());
-        }
+        createSolFile();
     }
 
     @FXML
@@ -148,5 +125,33 @@ public class FXMLController implements Initializable {
             + "    size: 20px, 20px;"
             + "    fill-color: rgb(255,0,0);"
             + "}";
+
+    private void createSolFile() throws FileNotFoundException, UnsupportedEncodingException {
+        ISolver solver = SolverFactory.newDefault();
+        solver.setTimeout(3600);
+        Reader reader = new DimacsReader(solver);
+        PrintWriter writer = new PrintWriter("dimacs.sol", "UTF-8");
+        try {
+            IProblem problem = reader.parseInstance("dimacs.cnf");
+            if (problem.isSatisfiable()) {
+                writer.println("SAT");
+                for (int e : problem.model()) {
+                    writer.print(e + " ");
+                }
+                writer.print("0");
+                writer.close();
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Wystąpił błąd");
+                alert.setHeaderText("Wystąpił błąd");
+                alert.setContentText("Ten problem jest nierozwiązywalny!");
+                alert.showAndWait();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (ContradictionException | ParseFormatException | IOException | TimeoutException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 }
