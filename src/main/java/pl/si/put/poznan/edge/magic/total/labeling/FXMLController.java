@@ -1,13 +1,14 @@
 package pl.si.put.poznan.edge.magic.total.labeling;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -86,10 +87,13 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    private void handleButtonSolve(ActionEvent event) throws IOException {
+    private void handleButtonSolve(ActionEvent event) throws IOException, InterruptedException {
         graph.write("graph.dgs");
 
+        createBeeFiles();
         createSolFile();
+        solveSatProblem();
+        clearDir();
     }
 
     @FXML
@@ -126,6 +130,11 @@ public class FXMLController implements Initializable {
             + "    fill-color: rgb(255,0,0);"
             + "}";
 
+    private void createBeeFiles() throws IOException, InterruptedException {
+        Process p = Runtime.getRuntime().exec("bumblebee.exe plik.bee -dimacs dimacs.cnf dimacs.map");
+        p.waitFor();
+    }
+
     private void createSolFile() throws FileNotFoundException, UnsupportedEncodingException {
         ISolver solver = SolverFactory.newDefault();
         solver.setTimeout(3600);
@@ -151,6 +160,39 @@ public class FXMLController implements Initializable {
             System.out.println(e.getMessage());
         } catch (ContradictionException | ParseFormatException | IOException | TimeoutException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void solveSatProblem() throws IOException, InterruptedException {
+        Process p = Runtime.getRuntime().exec("bumblesol.exe dimacs.map dimacs.sol");
+        p.waitFor();
+
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String s;
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+    }
+
+    private void clearDir() {
+        File f = new File("dimacs.cnf");
+        if (f.exists() && !f.isDirectory()) {
+            f.delete();
+        }
+        
+        f = new File("dimacs.map");
+        if (f.exists() && !f.isDirectory()) {
+            f.delete();
+        }
+        
+        f = new File("dimacs.sol");
+        if (f.exists() && !f.isDirectory()) {
+            f.delete();
+        }
+        
+        f = new File("graph.dgs");
+        if (f.exists() && !f.isDirectory()) {
+            f.delete();
         }
     }
 
