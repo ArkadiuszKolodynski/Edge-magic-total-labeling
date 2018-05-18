@@ -9,7 +9,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,13 +65,15 @@ public class FXMLController implements Initializable {
         numberOfNodes = number.getText();
         graph.clear();
 
+        Map<String, Object> attributes = new HashMap<>();
         try {
             for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
                 String j = Integer.toString(i);
-                graph.addNode(j).setAttribute("ui.label", j);
+                attributes.put("ui.label", j);
+                attributes.put("ui.style", "size: 30px, 30px; text-alignment: under; text-size: 25;");
+                graph.addNode(j).setAttributes(attributes);
+                attributes.clear();
             }
-
-            graph.setAttribute("ui.stylesheet", styleSheet);
 
             Parent home_page_parent = FXMLLoader.load(getClass().getResource("/fxml/mainpage.fxml"));
             Scene home_page_scene = new Scene(home_page_parent);
@@ -121,18 +125,13 @@ public class FXMLController implements Initializable {
         }
 
         if (pane != null) {
+            graph.setAttribute("ui.stylesheet", "graph { fill-color: red; }");
             Viewer viewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
             viewer.enableAutoLayout();
             FxViewPanel v = (FxViewPanel) viewer.addDefaultView(false);
             pane.getChildren().add(v);
         }
     }
-
-    protected static String styleSheet
-            = "node {"
-            + "    size: 20px, 20px;"
-            + "    fill-color: rgb(255,0,0);"
-            + "}";
 
     private void createBeeFiles() throws IOException, InterruptedException {
         Process p = Runtime.getRuntime().exec("bumblebee.exe plik.bee -dimacs dimacs.cnf dimacs.map");
@@ -176,6 +175,12 @@ public class FXMLController implements Initializable {
         while ((s = stdInput.readLine()) != null) {
             System.out.println(s);
         }
+        
+//        Dodawanie etykiety do krawedzi
+//        Map<String, Object> attributes = new HashMap<>();
+//        attributes.put("ui.label", "jakas etykieta");
+//        attributes.put("ui.style", "text-size: 30;");
+//        graph.getEdge(0).setAttributes(attributes);
     }
 
     private void clearDir() {
