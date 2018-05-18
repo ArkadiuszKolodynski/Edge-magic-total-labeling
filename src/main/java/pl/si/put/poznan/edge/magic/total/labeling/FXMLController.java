@@ -1,8 +1,12 @@
 package pl.si.put.poznan.edge.magic.total.labeling;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,9 +14,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.graphstream.graph.Graph;
@@ -21,6 +26,14 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.view.Viewer;
+import org.sat4j.minisat.SolverFactory;
+import org.sat4j.reader.DimacsReader;
+import org.sat4j.reader.ParseFormatException;
+import org.sat4j.reader.Reader;
+import org.sat4j.specs.ContradictionException;
+import org.sat4j.specs.IProblem;
+import org.sat4j.specs.ISolver;
+import org.sat4j.specs.TimeoutException;
 
 public class FXMLController implements Initializable {
 
@@ -73,8 +86,33 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonSolve(ActionEvent event) throws IOException {
-        System.out.println("Rozwiazywanie...");
+        graph.write("graph.dgs");
 
+        ISolver solver = SolverFactory.newDefault();
+        solver.setTimeout(3600);
+        Reader reader = new DimacsReader(solver);
+        PrintWriter writer = new PrintWriter("dimacs.sol", "UTF-8");
+        try {
+            IProblem problem = reader.parseInstance("dimacs.cnf");
+            if (problem.isSatisfiable()) {
+                writer.println("SAT");
+                for (int e : problem.model()) {
+                    writer.print(e + " ");
+                }
+                writer.print("0");
+                writer.close();
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Wystąpił błąd");
+                alert.setHeaderText("Wystąpił błąd");
+                alert.setContentText("Ten problem jest nierozwiązywalny!");
+                alert.showAndWait();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (ContradictionException | ParseFormatException | IOException | TimeoutException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @FXML
@@ -108,6 +146,7 @@ public class FXMLController implements Initializable {
     protected static String styleSheet
             = "node {"
             + "    size: 20px, 20px;"
+            + "    fill-color: rgb(255,0,0);"
             + "}";
 
 }
