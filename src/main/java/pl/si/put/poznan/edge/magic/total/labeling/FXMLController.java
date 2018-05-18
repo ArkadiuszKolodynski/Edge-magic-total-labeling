@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -175,24 +177,16 @@ public class FXMLController implements Initializable {
     }
 
     private void clearDir() {
-        File f = new File("dimacs.cnf");
-        if (f.exists() && !f.isDirectory()) {
-            f.delete();
-        }
-        
-        f = new File("dimacs.map");
-        if (f.exists() && !f.isDirectory()) {
-            f.delete();
-        }
-        
-        f = new File("dimacs.sol");
-        if (f.exists() && !f.isDirectory()) {
-            f.delete();
-        }
-        
-        f = new File("graph.dgs");
-        if (f.exists() && !f.isDirectory()) {
-            f.delete();
+        List<File> files = new ArrayList<>();
+        files.add(new File("dimacs.cnf"));
+        files.add(new File("dimacs.map"));
+        files.add(new File("dimacs.sol"));
+        files.add(new File("graph.dgs"));
+
+        for (File f : files) {
+            if (f.exists() && !f.isDirectory()) {
+                f.delete();
+            }
         }
     }
 
