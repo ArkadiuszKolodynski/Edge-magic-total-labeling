@@ -109,7 +109,6 @@ public class FXMLController implements Initializable {
         createBeeFile();
         createCnfAndMapFiles();
         createSolFile();
-        solveSatProblem();
         clearDir();
     }
 
@@ -135,7 +134,6 @@ public class FXMLController implements Initializable {
         }
 
         if (pane != null) {
-            graph.setAttribute("ui.stylesheet", "graph { fill-color: red; }");
             Viewer viewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
             viewer.enableAutoLayout();
             FxViewPanel v = (FxViewPanel) viewer.addDefaultView(false);
@@ -178,7 +176,7 @@ public class FXMLController implements Initializable {
         p.waitFor();
     }
 
-    private void createSolFile() throws FileNotFoundException, UnsupportedEncodingException {
+    private void createSolFile() throws FileNotFoundException, UnsupportedEncodingException, InterruptedException {
         ISolver solver = SolverFactory.newDefault();
         solver.setTimeout(3600);
         Reader reader = new DimacsReader(solver);
@@ -192,6 +190,7 @@ public class FXMLController implements Initializable {
                 }
                 writer.print("0");
                 writer.close();
+                solveSatProblem();
             } else {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Wystąpił błąd");
