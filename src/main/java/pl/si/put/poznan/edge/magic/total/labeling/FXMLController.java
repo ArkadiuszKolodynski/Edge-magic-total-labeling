@@ -97,7 +97,7 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleButtonEdge(ActionEvent event) throws IOException {
         if (w1Combo.getValue() != null && w2Combo.getValue() != null) {
-            graph.addEdge(w1Combo.getValue() + w2Combo.getValue(), w1Combo.getValue(), w2Combo.getValue(), true);
+            graph.addEdge(w1Combo.getValue() + w2Combo.getValue(), w1Combo.getValue(), w2Combo.getValue());
             numberOfEdges++;
             String edge = "kw" + w1Combo.getValue() + "w" + w2Combo.getValue();
             edges.add(edge);
