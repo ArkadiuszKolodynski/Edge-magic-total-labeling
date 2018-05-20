@@ -44,9 +44,9 @@ import org.sat4j.specs.TimeoutException;
 
 public class FXMLController implements Initializable {
 
-    private static String numberOfNodes;
+    private static int numberOfNodes;
     private static int numberOfEdges;
-    private List<String> edges = new ArrayList<String>();
+    private final List<String> edges = new ArrayList<>();
 
     private static final Graph graph = new SingleGraph("Edge-magic-total-labeling");
 
@@ -64,17 +64,15 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonConfirm(ActionEvent event) throws IOException {
-        numberOfNodes = number.getText();
-        graph.clear();
-        File file = new File("plik.bee");
-        PrintWriter zapis = new PrintWriter("plik.bee");
-	zapis.println("Ala ma kota, a kot ma Alę");
-	zapis.close();
-
-        Map<String, Object> attributes = new HashMap<>();
         try {
-            for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
-                zapis.println("Ala ma kota, a kot ma Alę");
+            numberOfNodes = Integer.parseInt(number.getText());
+            numberOfEdges = 0;
+            graph.clear();
+            edges.clear();
+
+            Map<String, Object> attributes = new HashMap<>();
+
+            for (int i = 1; i <= numberOfNodes; i++) {
                 String j = Integer.toString(i);
                 attributes.put("ui.label", j);
                 attributes.put("ui.style", "size: 30px, 30px; text-alignment: under; text-size: 25;");
@@ -98,27 +96,15 @@ public class FXMLController implements Initializable {
         if (w1Combo.getValue() != null && w2Combo.getValue() != null) {
             graph.addEdge(w1Combo.getValue() + w2Combo.getValue(), w1Combo.getValue(), w2Combo.getValue());
             numberOfEdges++;
-            String edge="kw"+w1Combo.getValue()+"w"+w2Combo.getValue();
+            String edge = "kw" + w1Combo.getValue() + "w" + w2Combo.getValue();
             edges.add(edge);
         }
     }
 
     @FXML
     private void handleButtonSolve(ActionEvent event) throws IOException, InterruptedException {
-        //graph.write("graph.dgs");
-
-        File file = new File("plik.bee");
-        PrintWriter zapis = new PrintWriter("plik.bee");
-        for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
-                zapis.println("new_int(w"+i+",1,"+(Integer.parseInt(numberOfNodes)+numberOfEdges)+")");
-            }
-        for (int i = 0; i < numberOfEdges; i++) {
-                zapis.println("new_int("+edges.get(i)+",1,"+(Integer.parseInt(numberOfNodes)+numberOfEdges)+")");
-            }
-        int magic = ((Integer.parseInt(numberOfNodes)+numberOfEdges) * 3) - 3;
-        zapis.println("new_int(m,1,"+magic+")");
-	zapis.close();
-        createBeeFiles();
+        createBeeFile();
+        createCnfAndMapFiles();
         createSolFile();
         solveSatProblem();
         clearDir();
@@ -127,18 +113,18 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleButtonClear(ActionEvent event) throws IOException {
         for (Object e : graph.edges().toArray()) {
-            graph.removeEdge((Edge)e);
+            graph.removeEdge((Edge) e);
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if (numberOfNodes != null) {
-            number.setText(numberOfNodes);
+        if (numberOfNodes > 0) {
+            number.setText(Integer.toString(numberOfNodes));
         }
 
         if (w1Combo != null && w2Combo != null) {
-            for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
+            for (int i = 1; i <= numberOfNodes; i++) {
                 String j = Integer.toString(i);
                 w1Combo.getItems().add(j);
                 w2Combo.getItems().add(j);
@@ -153,8 +139,38 @@ public class FXMLController implements Initializable {
             pane.getChildren().add(v);
         }
     }
+    
+    private void createBeeFile() throws FileNotFoundException {
+        File file = new File("plik.bee");
+        try (PrintWriter zapis = new PrintWriter("plik.bee")) {
+            for (int i = 1; i <= numberOfNodes; i++) {
+                zapis.println("new_int(w" + i + ",1," + (numberOfNodes + numberOfEdges) + ")");
+            }
+            for (int i = 0; i < numberOfEdges; i++) {
+                zapis.println("new_int(" + edges.get(i) + ",1," + (numberOfNodes + numberOfEdges) + ")");
+            }
+            int magic = ((numberOfNodes + numberOfEdges) * 3) - 3;
+            zapis.println("new_int(m,1," + magic + ")");
 
-    private void createBeeFiles() throws IOException, InterruptedException {
+            for (int i = 0; i < numberOfEdges; i++) {
+                String[] v = edges.get(i).split("w");
+                zapis.println("int_array_sum_eq([" + edges.get(i) + ",w" + v[1] + ",w" + v[2] + "],m)");
+            }
+
+            String s = "int_array_allDiff([w1";
+            for (int i = 2; i <= numberOfNodes; i++) {
+                s = s + ",w" + i;
+            }
+            for (int i = 0; i < numberOfEdges; i++) {
+                s = s + "," + edges.get(i);
+            }
+            s = s + "])";
+            zapis.println(s);
+            zapis.println("solve satisfy");
+        }
+    }
+
+    private void createCnfAndMapFiles() throws IOException, InterruptedException {
         Process p = Runtime.getRuntime().exec("bumblebee.exe plik.bee -dimacs dimacs.cnf dimacs.map");
         p.waitFor();
     }
@@ -195,13 +211,15 @@ public class FXMLController implements Initializable {
         String s;
         while ((s = stdInput.readLine()) != null) {
             System.out.println(s);
+            for (int i = 0; i < numberOfEdges; i++) {
+                if (s.contains(edges.get(i))) {
+                    Map<String, Object> attributes = new HashMap<>();
+                    attributes.put("ui.label", s.split(" ")[2]);
+                    attributes.put("ui.style", "text-size: 30;");
+                    graph.getEdge(i).setAttributes(attributes);
+                }
+            }
         }
-        
-//        Dodawanie etykiety do krawedzi
-//        Map<String, Object> attributes = new HashMap<>();
-//        attributes.put("ui.label", "jakas etykieta");
-//        attributes.put("ui.style", "text-size: 30;");
-//        graph.getEdge(0).setAttributes(attributes);
     }
 
     private void clearDir() {
@@ -209,7 +227,7 @@ public class FXMLController implements Initializable {
         files.add(new File("dimacs.cnf"));
         files.add(new File("dimacs.map"));
         files.add(new File("dimacs.sol"));
-        files.add(new File("graph.dgs"));
+        files.add(new File("plik.bee"));
 
         for (File f : files) {
             if (f.exists() && !f.isDirectory()) {
