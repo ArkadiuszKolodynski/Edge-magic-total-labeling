@@ -97,7 +97,7 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleButtonEdge(ActionEvent event) throws IOException {
         if (w1Combo.getValue() != null && w2Combo.getValue() != null) {
-            graph.addEdge(w1Combo.getValue() + w2Combo.getValue(), w1Combo.getValue(), w2Combo.getValue());
+            graph.addEdge(w1Combo.getValue() + w2Combo.getValue(), w1Combo.getValue(), w2Combo.getValue(), true);
             numberOfEdges++;
             String edge = "kw" + w1Combo.getValue() + "w" + w2Combo.getValue();
             edges.add(edge);
@@ -142,7 +142,7 @@ public class FXMLController implements Initializable {
     }
     
     private void createBeeFile() throws FileNotFoundException {
-        File file = new File("plik.bee");
+        new File("plik.bee");
         try (PrintWriter zapis = new PrintWriter("plik.bee")) {
             for (int i = 1; i <= numberOfNodes; i++) {
                 zapis.println("new_int(w" + i + ",1," + (numberOfNodes + numberOfEdges) + ")");
