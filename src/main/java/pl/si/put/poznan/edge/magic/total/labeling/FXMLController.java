@@ -46,7 +46,8 @@ public class FXMLController implements Initializable {
 
     private static int numberOfNodes;
     private static int numberOfEdges;
-    private final List<String> edges = new ArrayList<>();
+    private static final List<String> nodes = new ArrayList<>();
+    private static final List<String> edges = new ArrayList<>();
 
     private static final Graph graph = new SingleGraph("Edge-magic-total-labeling");
 
@@ -68,6 +69,7 @@ public class FXMLController implements Initializable {
             numberOfNodes = Integer.parseInt(number.getText());
             numberOfEdges = 0;
             graph.clear();
+            nodes.clear();
             edges.clear();
 
             Map<String, Object> attributes = new HashMap<>();
@@ -77,6 +79,7 @@ public class FXMLController implements Initializable {
                 attributes.put("ui.label", j);
                 attributes.put("ui.style", "size: 30px, 30px; text-alignment: under; text-size: 25;");
                 graph.addNode(j).setAttributes(attributes);
+                nodes.add("w" + j);
                 attributes.clear();
             }
 
@@ -211,6 +214,11 @@ public class FXMLController implements Initializable {
         String s;
         while ((s = stdInput.readLine()) != null) {
             System.out.println(s);
+            for (int i = 0; i < numberOfNodes; i++) {
+                if (s.startsWith(nodes.get(i))) {
+                    graph.getNode(i).setAttribute("ui.label", s.split(" ")[2]);
+                }
+            }
             for (int i = 0; i < numberOfEdges; i++) {
                 if (s.contains(edges.get(i))) {
                     Map<String, Object> attributes = new HashMap<>();
