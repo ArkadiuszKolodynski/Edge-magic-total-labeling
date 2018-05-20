@@ -45,6 +45,8 @@ import org.sat4j.specs.TimeoutException;
 public class FXMLController implements Initializable {
 
     private static String numberOfNodes;
+    private static int numberOfEdges;
+    private List<String> edges = new ArrayList<String>();
 
     private static final Graph graph = new SingleGraph("Edge-magic-total-labeling");
 
@@ -64,10 +66,15 @@ public class FXMLController implements Initializable {
     private void handleButtonConfirm(ActionEvent event) throws IOException {
         numberOfNodes = number.getText();
         graph.clear();
+        File file = new File("plik.bee");
+        PrintWriter zapis = new PrintWriter("plik.bee");
+	zapis.println("Ala ma kota, a kot ma Alę");
+	zapis.close();
 
         Map<String, Object> attributes = new HashMap<>();
         try {
             for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
+                zapis.println("Ala ma kota, a kot ma Alę");
                 String j = Integer.toString(i);
                 attributes.put("ui.label", j);
                 attributes.put("ui.style", "size: 30px, 30px; text-alignment: under; text-size: 25;");
@@ -90,13 +97,27 @@ public class FXMLController implements Initializable {
     private void handleButtonEdge(ActionEvent event) throws IOException {
         if (w1Combo.getValue() != null && w2Combo.getValue() != null) {
             graph.addEdge(w1Combo.getValue() + w2Combo.getValue(), w1Combo.getValue(), w2Combo.getValue());
+            numberOfEdges++;
+            String edge="kw"+w1Combo.getValue()+"w"+w2Combo.getValue();
+            edges.add(edge);
         }
     }
 
     @FXML
     private void handleButtonSolve(ActionEvent event) throws IOException, InterruptedException {
-        graph.write("graph.dgs");
+        //graph.write("graph.dgs");
 
+        File file = new File("plik.bee");
+        PrintWriter zapis = new PrintWriter("plik.bee");
+        for (int i = 1; i <= Integer.parseInt(numberOfNodes); i++) {
+                zapis.println("new_int(w"+i+",1,"+(Integer.parseInt(numberOfNodes)+numberOfEdges)+")");
+            }
+        for (int i = 0; i < numberOfEdges; i++) {
+                zapis.println("new_int("+edges.get(i)+",1,"+(Integer.parseInt(numberOfNodes)+numberOfEdges)+")");
+            }
+        int magic = ((Integer.parseInt(numberOfNodes)+numberOfEdges) * 3) - 3;
+        zapis.println("new_int(m,1,"+magic+")");
+	zapis.close();
         createBeeFiles();
         createSolFile();
         solveSatProblem();
