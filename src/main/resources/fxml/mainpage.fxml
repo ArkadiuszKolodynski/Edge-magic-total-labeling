@@ -54,5 +54,6 @@
          </cursor>
     </Button>
     <Pane fx:id="pane" layoutX="209.0" layoutY="14.0" prefHeight="400.0" prefWidth="400.0" />
+      <Button fx:id="dimacs" disable="true" layoutX="14.0" layoutY="414.0" mnemonicParsing="false" onAction="#handleButtonDimacs" text="Zapisz plik dimacs" />
   </children>
 </AnchorPane>

@@ -3,11 +3,14 @@ package pl.si.put.poznan.edge.magic.total.labeling;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +25,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -64,8 +70,20 @@ public class FXMLController implements Initializable {
     private Pane pane;
 
     @FXML
+    private Button dimacs;
+
+    @FXML
+    private TextFlow textFlow;
+
+    private String dimacsContent;
+
+    @FXML
     private void handleButtonConfirm(ActionEvent event) throws IOException {
         try {
+            if (dimacs != null) {
+                dimacs.setDisable(true);
+            }
+
             numberOfNodes = Integer.parseInt(number.getText());
             numberOfEdges = 0;
             graph.clear();
@@ -106,6 +124,7 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonSolve(ActionEvent event) throws IOException, InterruptedException {
+        dimacs.setDisable(false);
         createBeeFile();
         createCnfAndMapFiles();
         createSolFile();
@@ -114,8 +133,24 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonClear(ActionEvent event) throws IOException {
+        dimacs.setDisable(true);
+
         for (Object e : graph.edges().toArray()) {
             graph.removeEdge((Edge) e);
+        }
+    }
+
+    @FXML
+    private void handleButtonDimacs(ActionEvent event) throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file");
+        fileChooser.setInitialFileName("dimacs.cnf");
+        File savedFile = fileChooser.showSaveDialog(((Node) event.getSource()).getScene().getWindow());
+
+        if (savedFile != null) {
+            try (FileWriter fileWriter = new FileWriter(savedFile)) {
+                fileWriter.write(dimacsContent);
+            }
         }
     }
 
@@ -140,7 +175,7 @@ public class FXMLController implements Initializable {
             pane.getChildren().add(v);
         }
     }
-    
+
     private void createBeeFile() throws FileNotFoundException {
         new File("plik.bee");
         try (PrintWriter zapis = new PrintWriter("plik.bee")) {
@@ -174,6 +209,9 @@ public class FXMLController implements Initializable {
     private void createCnfAndMapFiles() throws IOException, InterruptedException {
         Process p = Runtime.getRuntime().exec("bumblebee.exe plik.bee -dimacs dimacs.cnf dimacs.map");
         p.waitFor();
+
+        byte[] encoded = Files.readAllBytes(Paths.get("dimacs.cnf"));
+        dimacsContent = new String(encoded, "UTF-8");
     }
 
     private void createSolFile() throws FileNotFoundException, UnsupportedEncodingException, InterruptedException {
