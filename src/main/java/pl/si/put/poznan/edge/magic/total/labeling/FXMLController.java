@@ -13,10 +13,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Files;
-<<<<<<< HEAD
-=======
 import java.nio.file.Paths;
->>>>>>> origin/master
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +36,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-<<<<<<< HEAD
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-=======
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
->>>>>>> origin/master
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.graphstream.graph.Edge;
@@ -149,7 +143,6 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonSolve(ActionEvent event) throws IOException, InterruptedException {
-        dimacs.setDisable(false);
         createBeeFile();
         createCnfAndMapFiles();
         createSolFile();

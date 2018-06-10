@@ -30,11 +30,7 @@
     <Button layoutX="14.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleButtonEdge" prefWidth="181.0" text="Dodaj krawędź" />
     <Button font="$x1" layoutX="14.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleButtonSolve" prefHeight="61.0" prefWidth="181.0" text="Rozwiąż" />
     <Pane fx:id="pane" layoutX="209.0" layoutY="14.0" prefHeight="400.0" prefWidth="400.0" />
-<<<<<<< HEAD
     <Button fx:id="cnfbutton" cancelButton="false" defaultButton="false" disable="true" layoutX="14.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleButtonCnf" prefHeight="61.0" prefWidth="181.0" text="Pokaż plik CNF" />
-    <Button fx:id="beebutton" id="beebutton" cancelButton="false" defaultButton="false" disable="true" layoutX="14.0" layoutY="414.0" mnemonicParsing="false" onAction="#handleButtonBee" prefHeight="61.0" prefWidth="181.0" text="Pokaż plik BEE" />
-=======
-      <Button fx:id="dimacs" disable="true" layoutX="14.0" layoutY="414.0" mnemonicParsing="false" onAction="#handleButtonDimacs" text="Zapisz plik dimacs" />
->>>>>>> origin/master
+    <Button fx:id="beebutton" cancelButton="false" defaultButton="false" disable="true" layoutX="14.0" layoutY="414.0" mnemonicParsing="false" onAction="#handleButtonBee" prefHeight="61.0" prefWidth="181.0" text="Pokaż plik BEE" />
   </children>
 </AnchorPane>
