@@ -1,7 +1,10 @@
 package pl.si.put.poznan.edge.magic.total.labeling;
 
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,13 +13,18 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Files;
+<<<<<<< HEAD
+=======
 import java.nio.file.Paths;
+>>>>>>> origin/master
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,11 +35,19 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+<<<<<<< HEAD
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+=======
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+>>>>>>> origin/master
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.IdAlreadyInUseException;
@@ -68,6 +84,15 @@ public class FXMLController implements Initializable {
 
     @FXML
     private Pane pane;
+    
+    @FXML
+    private Button cnfbutton;
+    
+    @FXML
+    private Button beebutton;
+    
+    @FXML
+    private ScrollPane sp;
 
     @FXML
     private Button dimacs;
@@ -128,7 +153,55 @@ public class FXMLController implements Initializable {
         createBeeFile();
         createCnfAndMapFiles();
         createSolFile();
-        clearDir();
+        cnfbutton.setDisable(false);
+        beebutton.setDisable(false);
+        //clearDir();
+    }
+    
+    @FXML
+    private void handleButtonCnf(ActionEvent event) throws IOException, InterruptedException {
+        VBox myView = new VBox();
+        File file = new File("dimacs.cnf");
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
+
+        String str = new String(data, "UTF-8");
+        Text text = new Text(str);
+        text.setWrappingWidth(250);
+        myView.getChildren().addAll(text);
+        sp = new ScrollPane();
+        sp.setContent(myView);
+        sp.setFitToWidth(true); 
+        Stage stage = new Stage();
+        stage.setTitle("Plik CNF");
+        stage.setScene(new Scene(sp, 450, 450));
+        stage.show();
+        
+    }
+    
+    @FXML
+    private void handleButtonBee(ActionEvent event) throws IOException, InterruptedException {
+        VBox myView = new VBox();
+        File file = new File("plik.bee");
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
+
+        String str = new String(data, "UTF-8");
+        Text text = new Text(str);
+        text.setWrappingWidth(250);
+        myView.getChildren().addAll(text);
+        sp = new ScrollPane();
+        sp.setContent(myView);
+        sp.setFitToWidth(true); 
+        Stage stage = new Stage();
+        stage.setTitle("Plik BEE");
+        stage.setScene(new Scene(sp, 450, 450));
+        stage.show();
+        
     }
 
     @FXML
